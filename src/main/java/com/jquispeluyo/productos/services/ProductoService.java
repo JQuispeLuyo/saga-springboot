@@ -3,7 +3,6 @@ package com.jquispeluyo.productos.services;
 import com.jquispeluyo.productos.error.ProductoNotFoundException;
 import com.jquispeluyo.productos.models.Producto;
 import com.jquispeluyo.productos.repositories.ProductoRepository;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,20 +15,7 @@ import java.util.List;
 public class ProductoService {
 
     @Autowired
-    RestTemplate restTemplate;
-
-    @Autowired
     ProductoRepository productoRepository;
-
-    @HystrixCommand(fallbackMethod = "reliable")
-    public String readingList() {
-        URI uri = URI.create("http://localhost:8090/recommended");
-        return this.restTemplate.getForObject(uri, String.class);
-    }
-
-    public String reliable() {
-        return "Cloud Native Java (O'Reilly)";
-    }
 
     public List<Producto> findAll (){
         return productoRepository.findAll();
@@ -40,6 +26,10 @@ public class ProductoService {
                 .orElseGet(()->{
                     throw new ProductoNotFoundException(id);
                 });
+    }
+
+    public Producto create(Producto producto){
+        return productoRepository.save(producto);
     }
 
     public Producto updateCantidad (String id, Integer cantidad){
@@ -62,6 +52,10 @@ public class ProductoService {
                 .orElseGet(()->{
                     throw new ProductoNotFoundException(id);
                 });
+    }
+
+    public void delete(String id){
+        productoRepository.deleteById(id);
     }
 
 }
