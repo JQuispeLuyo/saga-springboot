@@ -1,10 +1,9 @@
-package controller;
+package com.ascencio.api_cuentas.controller;
 
-import model.Cuenta;
+import com.ascencio.api_cuentas.model.Cuenta;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import repository.CuentaRepository;
+import com.ascencio.api_cuentas.repository.CuentaRepository;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,7 +15,7 @@ public class CuentaC {
     @Autowired
     CuentaRepository cuentaRepository;
 
-    @GetMapping(value = "/getAll")
+    @GetMapping("/getAll")
     public List<Cuenta> getAllCuentas() {
         return cuentaRepository.findAll();
     }
@@ -25,5 +24,10 @@ public class CuentaC {
     public Cuenta createCuenta(@Valid @RequestBody Cuenta cuenta) {
        return cuentaRepository.save(cuenta);
     }
+
+    /*@GetMapping("/getcuenta/{id_cliente}")
+    public List<Cuenta> findById_cliente(@PathVariable String idCliente) {
+        return cuentaRepository.findById_cliente(idCliente);
+    }*/
 
 }

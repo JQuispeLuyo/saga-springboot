@@ -6,7 +6,6 @@ import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.web.bind.annotation.RestController;
 
 @EnableCircuitBreaker
-@RestController
 @SpringBootApplication
 public class ApiCuentasApplication {
 

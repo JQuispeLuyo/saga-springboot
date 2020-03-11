@@ -1,4 +1,4 @@
-package service;
+package com.ascencio.api_cuentas.service;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import java.net.URI;
 @Service
 public class CuentaService {
 
-    private final RestTemplate restTemplate;
+    /*private final RestTemplate restTemplate;
 
     public CuentaService(RestTemplate rest) {
         this.restTemplate = rest;
@@ -24,5 +24,5 @@ public class CuentaService {
 
     public String reliable() {
         return "Cloud Native Java (O'Reilly)";
-    }
+    }*/
 }
