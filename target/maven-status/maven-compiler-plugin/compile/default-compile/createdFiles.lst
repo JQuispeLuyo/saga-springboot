@@ -1,0 +1,3 @@
+com\jhordyguerra\base\BaseApplication.class
+com\jhordyguerra\base\bean\MyKafka.class
+com\jhordyguerra\base\CProducer.class
