@@ -24,12 +24,12 @@ public class ProductoController {
         return productoService.findById(id);
     }
 
-    @GetMapping("/update-cantidad")
+    @PutMapping("/update-cantidad")
     public Producto updateCantidad (@RequestParam("id") String id, @RequestParam("cantidad") Integer cantidad){
         return productoService.updateCantidad(id, cantidad);
     }
 
-    @GetMapping("/update-cantidad-fallback")
+    @PutMapping("/update-cantidad-fallback")
     public Producto updateCantidadFallback (@RequestParam("id") String id, @RequestParam("cantidad") Integer cantidad){
         return productoService.updateCantidadFallback(id, cantidad);
     }
