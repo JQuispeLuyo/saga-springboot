@@ -17,7 +17,7 @@ public class CuentaC {
     CuentaRepository cuentaRepository;
 
     @GetMapping(value = "/getAll")
-    public List<Cuenta> getAllCunetas() {
+    public List<Cuenta> getAllCuentas() {
         return cuentaRepository.findAll();
     }
 
