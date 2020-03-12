@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface CuentaRepository extends MongoRepository<Cuenta, String> {
 
-//    List<Cuenta> findById_cliente(String idCliente);
+    public Cuenta findByCliente(String cliente);
+
 }

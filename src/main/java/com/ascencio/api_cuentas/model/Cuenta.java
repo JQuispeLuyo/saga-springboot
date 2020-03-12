@@ -3,12 +3,13 @@ package com.ascencio.api_cuentas.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+
 @Document(collection = "cuenta")
 public class Cuenta {
 
     @Id
     private String _id;
-    private String id_cliente;
+    private String cliente;
     private Double saldo;
 
     public String get_id() {
@@ -19,12 +20,12 @@ public class Cuenta {
         this._id = _id;
     }
 
-    public String getId_cliente() {
-        return id_cliente;
+    public String getCliente() {
+        return cliente;
     }
 
-    public void setId_cliente(String id_cliente) {
-        this.id_cliente = id_cliente;
+    public void setCliente(String cliente) {
+        this.cliente = cliente;
     }
 
     public Double getSaldo() {
@@ -39,7 +40,7 @@ public class Cuenta {
     public String toString() {
         return "Cuenta{" +
                 "_id='" + _id + '\'' +
-                ", id_cliente='" + id_cliente + '\'' +
+                ", id_cliente='" + cliente + '\'' +
                 ", saldo=" + saldo +
                 '}';
     }

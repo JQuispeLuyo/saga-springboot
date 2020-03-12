@@ -7,6 +7,7 @@ import com.ascencio.api_cuentas.repository.CuentaRepository;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -25,9 +26,17 @@ public class CuentaC {
        return cuentaRepository.save(cuenta);
     }
 
-    /*@GetMapping("/getcuenta/{id_cliente}")
-    public List<Cuenta> findById_cliente(@PathVariable String idCliente) {
-        return cuentaRepository.findById_cliente(idCliente);
-    }*/
+    @PostMapping("/getcuenta/{cliente}/{monto}")
+    public String findByCliente(@PathVariable String cliente,@PathVariable Double monto) {
+        Cuenta cuenta = new Cuenta();
+        cuenta = cuentaRepository.findByCliente(cliente);
+
+        if(!(cuenta.getSaldo() <= monto)){
+            cuenta.setSaldo(cuenta.getSaldo() - monto);
+            cuentaRepository.save(cuenta);
+            return "Saldo correcto";
+        }
+        return "Saldo Insuficiente";
+    }
 
 }
