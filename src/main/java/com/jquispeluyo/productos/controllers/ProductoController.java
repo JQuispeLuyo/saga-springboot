@@ -29,17 +29,17 @@ public class ProductoController {
         return productoService.create(producto);
     }
 
-    @PutMapping("/update-cantidad")
+    @PutMapping("/restar-cantidad")
     public Producto updateCantidad (@RequestParam("id") String id, @RequestParam("cantidad") Integer cantidad){
         return productoService.updateCantidad(id, cantidad);
     }
 
-    @PutMapping("/update-cantidad-fallback")
+    @PutMapping("/sumar-cantidad")
     public Producto updateCantidadFallback (@RequestParam("id") String id, @RequestParam("cantidad") Integer cantidad){
         return productoService.updateCantidadFallback(id, cantidad);
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping("/delete/{id}")
     public void create(@PathVariable("id") String id){
         productoService.delete(id);
     }

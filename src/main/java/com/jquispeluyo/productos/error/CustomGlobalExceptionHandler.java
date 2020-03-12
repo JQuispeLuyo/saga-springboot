@@ -16,4 +16,8 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         response.sendError(HttpStatus.NOT_FOUND.value());
     }
 
+    @ExceptionHandler(ProductoBadRequestException.class)
+    public void springHandleBadRequest(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.BAD_REQUEST.value());
+    }
 }

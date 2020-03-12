@@ -9,6 +9,7 @@ public class Producto {
     @Id
     private String _id;
     private String descripcion;
+    private Double precio;
     private Integer cantidad;
 
 }

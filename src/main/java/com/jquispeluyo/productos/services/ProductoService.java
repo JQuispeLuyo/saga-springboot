@@ -1,5 +1,6 @@
 package com.jquispeluyo.productos.services;
 
+import com.jquispeluyo.productos.error.ProductoBadRequestException;
 import com.jquispeluyo.productos.error.ProductoNotFoundException;
 import com.jquispeluyo.productos.models.Producto;
 import com.jquispeluyo.productos.repositories.ProductoRepository;
@@ -35,6 +36,9 @@ public class ProductoService {
     public Producto updateCantidad (String id, Integer cantidad){
         return productoRepository.findById(id)
                 .map((x)->{
+
+                    if((x.getCantidad() - cantidad) < 0) throw new ProductoBadRequestException("Estock disponible: " + x.getCantidad());
+
                     x.setCantidad(x.getCantidad() - cantidad);
                     return productoRepository.save(x);
                 })
@@ -46,7 +50,7 @@ public class ProductoService {
     public Producto updateCantidadFallback (String id, Integer cantidad){
         return productoRepository.findById(id)
                 .map((x)->{
-                    x.setCantidad(x.getCantidad() - cantidad);
+                    x.setCantidad(x.getCantidad() + cantidad);
                     return productoRepository.save(x);
                 })
                 .orElseGet(()->{
