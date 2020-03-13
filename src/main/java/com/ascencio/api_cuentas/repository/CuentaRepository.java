@@ -5,10 +5,11 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CuentaRepository extends MongoRepository<Cuenta, String> {
 
-    public Cuenta findByCliente(String cliente);
+    Optional<Cuenta> findByCliente(String cliente);
 
 }

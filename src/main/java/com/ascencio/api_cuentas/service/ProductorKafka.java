@@ -13,6 +13,7 @@ public class ProductorKafka {
     private final String kafkaTopic = "test";
 
     public  void send(String mensaje){
+
         kafkaTemplate.send(kafkaTopic, mensaje);
     }
 }

@@ -1,18 +1,26 @@
 package com.ascencio.api_cuentas.controller;
 
+import com.ascencio.api_cuentas.model.ActualizarSaldoDTO;
 import com.ascencio.api_cuentas.model.Cuenta;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+import com.ascencio.api_cuentas.model.ProductoDTO;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import com.ascencio.api_cuentas.repository.CuentaRepository;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 @RestController
@@ -23,43 +31,29 @@ public class CuentaC {
     CuentaRepository cuentaRepository;
 
     @Autowired
-    private KafkaTemplate<String, String> template;
+    ObjectMapper objectMapper;
 
-    @KafkaListener(topics = { "cuentaservice" })
-    public void listen(ConsumerRecord<?, ?> record) {
-        Optional<?> kafkaMessage = Optional.ofNullable(record.value());
-        if (kafkaMessage.isPresent()) {
-            Object message = kafkaMessage.get();
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
 
-
-
-            System.out.println("---->" + message);
+    @KafkaListener(topics = "cuentaservice")
+    public void consume(String message) throws JsonProcessingException {
+        ActualizarSaldoDTO actualizarSaldoDTO = objectMapper.readValue(message, ActualizarSaldoDTO.class);
+        System.out.println(actualizarSaldoDTO);
+        Optional<Cuenta> cuenta = cuentaRepository.findByCliente(actualizarSaldoDTO.getIdCliente());
+        System.out.println(cuenta);
+        Double descuento = (actualizarSaldoDTO.getProductoDto().getCantidad() * actualizarSaldoDTO.getProductoDto().getPrecio());
+        if (cuenta.isPresent() && !(cuenta.get().getSaldo() <= descuento)) {
+            cuenta.get().setSaldo(cuenta.get().getSaldo() - descuento);
+            cuentaRepository.save(cuenta.get());
+        } else {
+            send(actualizarSaldoDTO.getProductoDto());
         }
     }
 
-    @PostMapping("/getcuenta/{cliente}/{monto}")
-    public String findByCliente(@PathVariable String cliente,@PathVariable Double monto) {
-        Cuenta cuenta = new Cuenta();
-        cuenta = cuentaRepository.findByCliente(cliente);
 
-        if(!(cuenta.getSaldo() <= monto)){
-            cuenta.setSaldo(cuenta.getSaldo() - monto);
-            cuentaRepository.save(cuenta);
-            return "Saldo correcto";
-        }
-        return "Saldo Insuficiente";
-    }
-
-
-
-    @GetMapping("/getAll")
-    public List<Cuenta> getAllCuentas() {
-        return cuentaRepository.findAll();
-    }
-
-    @PostMapping(value = "/create")
-    public Cuenta createCuenta(@Valid @RequestBody Cuenta cuenta) {
-        return cuentaRepository.save(cuenta);
+    public void send(ProductoDTO productoDTO) throws JsonProcessingException {
+        kafkaTemplate.send("productoservice", objectMapper.writeValueAsString(productoDTO));
     }
 
 }
