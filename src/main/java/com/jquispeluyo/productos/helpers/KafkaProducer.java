@@ -14,10 +14,10 @@ public class KafkaProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    private final String kafkaTopic = "test";
-
-    public void send(String message) {
-        kafkaTemplate.send(kafkaTopic, message);
-    }
+//    private final String kafkaTopic = "test";
+//
+//    public void send(String message) {
+//        kafkaTemplate.send(kafkaTopic, message);
+//    }
 
 }
