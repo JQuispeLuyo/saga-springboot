@@ -17,24 +17,14 @@ public class CuentaCTest {
 
     @GetMapping("/getAllCuentas")
     public List<Cuenta> getAllCuentas() {
+
         return cuentaRepository.findAll();
     }
 
     @PostMapping(value = "/create")
     public Cuenta createCuenta(@Valid @RequestBody Cuenta cuenta) {
+
         return cuentaRepository.save(cuenta);
     }
-
-    @PostMapping("/getcuenta/{cliente}/{monto}")
-    public String findByCliente(@PathVariable String cliente, @PathVariable Double monto) {
-        Cuenta cuenta = new Cuenta();
-        cuenta = cuentaRepository.findByCliente(cliente).orElse(null);
-
-        if(!(cuenta.getSaldo() <= monto)){
-            cuenta.setSaldo(cuenta.getSaldo() - monto);
-            cuentaRepository.save(cuenta);
-            return "Saldo correcto";
-        }
-        return "Saldo Insuficiente";
-    }
+    
 }

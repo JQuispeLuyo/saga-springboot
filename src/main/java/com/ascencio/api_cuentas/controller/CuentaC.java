@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import com.ascencio.api_cuentas.repository.CuentaRepository;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.Valid;
-import java.util.List;
+
+
 import java.util.Optional;
 
 @Service
@@ -46,7 +46,9 @@ public class CuentaC {
         if (cuenta.isPresent() && !(cuenta.get().getSaldo() <= descuento)) {
             cuenta.get().setSaldo(cuenta.get().getSaldo() - descuento);
             cuentaRepository.save(cuenta.get());
+            System.out.println("Transacción Completada satisfactoriamente :D");
         } else {
+            System.out.println("El cliente no existe o No cuentas con saldo suficiente :(");
             send(actualizarSaldoDTO.getProductoDto());
         }
     }
