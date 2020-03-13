@@ -10,6 +10,6 @@ public class Producto {
     private String _id;
     private String descripcion;
     private Double precio;
-    private Integer cantidad;
+    private Integer stock;
 
 }

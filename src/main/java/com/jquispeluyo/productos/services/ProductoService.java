@@ -2,9 +2,11 @@ package com.jquispeluyo.productos.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jquispeluyo.productos.dto.ActualizarSaldoDTO;
 import com.jquispeluyo.productos.dto.ProductoDTO;
 import com.jquispeluyo.productos.error.ProductoBadRequestException;
 import com.jquispeluyo.productos.error.ProductoNotFoundException;
+import com.jquispeluyo.productos.helpers.KafkaProducer;
 import com.jquispeluyo.productos.models.Producto;
 import com.jquispeluyo.productos.repositories.ProductoRepository;
 
@@ -23,58 +25,62 @@ public class ProductoService {
     private ProductoRepository productoRepository;
 
     @Autowired
-    private KafkaTemplate kafkaTemplate;
+    private KafkaProducer kafkaProducer;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    public List<Producto> findAll (){
+    public List<Producto> findAll() {
         return productoRepository.findAll();
     }
 
-    public Producto findById (String id){
+    public Producto findById(String id) {
         return productoRepository.findById(id)
-                .orElseGet(()->{
+                .orElseGet(() -> {
                     throw new ProductoNotFoundException(id);
                 });
     }
 
-    public Producto create(Producto producto){
+    public Producto create(Producto producto) {
         return productoRepository.save(producto);
     }
 
-    public Producto updateCantidad (String id, Integer cantidad){
-        return productoRepository.findById(id)
-                .map((x)->{
+    public Producto updateCantidad(String idCliente, String idProducto, Integer cantidad) {
+        return productoRepository.findById(idProducto)
+                .map((x) -> {
 
-                    if((x.getCantidad() - cantidad) < 0) throw new ProductoBadRequestException("Stock no disponible: " + x.getCantidad());
-                    try {
-                        x.setCantidad(x.getCantidad() - cantidad);
-                        productoRepository.save(x);
-                        kafkaTemplate.send("cuentaservice",objectMapper.writeValueAsString(x));
-                        return x;
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
+                    if ((x.getStock() - cantidad) < 0)
+                        throw new ProductoBadRequestException("Stock no disponible: " + x.getStock());
+
+                    x.setStock(x.getStock() - cantidad);
+                    productoRepository.save(x);
+                    ActualizarSaldoDTO actualizarSaldoDTO = new ActualizarSaldoDTO();
+                    actualizarSaldoDTO.setIdCliente(idCliente);
+                    ProductoDTO productoDTO = new ProductoDTO();
+                    productoDTO.set_id(x.get_id());
+                    productoDTO.setCantidad(cantidad);
+                    productoDTO.setPrecio(x.getPrecio());
+                    actualizarSaldoDTO.setProductoDto(productoDTO);
+                    kafkaProducer.send(actualizarSaldoDTO);
+                    return x;
                 })
-                .orElseGet(()->{
-                    throw new ProductoNotFoundException(id);
+                .orElseGet(() -> {
+                    throw new ProductoNotFoundException(idProducto);
                 });
     }
 
-    public Producto updateCantidadFallback (String id, Integer cantidad){
+    public Producto updateCantidadFallback(String id, Integer cantidad) {
         return productoRepository.findById(id)
-                .map((x)->{
-                    x.setCantidad(x.getCantidad() + cantidad);
+                .map((x) -> {
+                    x.setStock(x.getStock() + cantidad);
                     return productoRepository.save(x);
                 })
-                .orElseGet(()->{
+                .orElseGet(() -> {
                     throw new ProductoNotFoundException(id);
                 });
     }
 
-    public void delete(String id){
+    public void delete(String id) {
         productoRepository.deleteById(id);
     }
 

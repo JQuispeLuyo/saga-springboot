@@ -30,12 +30,14 @@ public class ProductoController {
     }
 
     @PutMapping("/restar-cantidad")
-    public Producto updateCantidad (@RequestParam("id") String id, @RequestParam("cantidad") Integer cantidad){
-        return productoService.updateCantidad(id, cantidad);
+    public Producto updateCantidad (@RequestParam("idCliente") String idCliente,
+                                    @RequestParam("idProducto") String idProducto,
+                                    @RequestParam("cantidad") Integer cantidad){
+        return productoService.updateCantidad(idCliente,idProducto, cantidad);
     }
 
     @PutMapping("/sumar-cantidad")
-    public Producto updateCantidadFallback (@RequestParam("id") String id, @RequestParam("cantidad") Integer cantidad){
+    public Producto updateCantidadFallback (@RequestParam("idProducto") String id, @RequestParam("cantidad") Integer cantidad){
         return productoService.updateCantidadFallback(id, cantidad);
     }
 
