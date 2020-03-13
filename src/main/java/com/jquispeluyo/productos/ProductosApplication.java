@@ -12,9 +12,4 @@ public class ProductosApplication {
 		SpringApplication.run(ProductosApplication.class, args);
 	}
 
-	@Bean
-	public RestTemplate restTemplate (){
-		return new RestTemplate();
-	}
-
 }
