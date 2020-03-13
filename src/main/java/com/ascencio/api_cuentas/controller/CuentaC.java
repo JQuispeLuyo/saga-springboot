@@ -1,6 +1,5 @@
 package com.ascencio.api_cuentas.controller;
 
-import com.ascencio.api_cuentas.model.ActualizarSaldoDTO;
 import com.ascencio.api_cuentas.model.Cuenta;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +25,17 @@ public class CuentaC {
     @Autowired
     private KafkaTemplate<String, String> template;
 
-    @KafkaListener @KafkaListener(topics = "cuentaservice")
-    public void listen1(String foo) {
-        ActualizarSaldoDTO actualizarSaldoDTO = new ActualizarSaldoDTO();
+    @KafkaListener(topics = { "cuentaservice" })
+    public void listen(ConsumerRecord<?, ?> record) {
+        Optional<?> kafkaMessage = Optional.ofNullable(record.value());
+        if (kafkaMessage.isPresent()) {
+            Object message = kafkaMessage.get();
 
-        System.out.printf("Memsaje :"+ foo);
+
+
+            System.out.println("---->" + message);
+        }
     }
-
-}
 
     @PostMapping("/getcuenta/{cliente}/{monto}")
     public String findByCliente(@PathVariable String cliente,@PathVariable Double monto) {
